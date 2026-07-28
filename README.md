@@ -1,6 +1,6 @@
 ﻿ # BibliotecaPOO_CEspinoza
-// es una aplicación de consola desarrollada en *C#* utilizando los principios de *Programación Orientada a Objetos (POO)//
-//El sistema permite administrar una biblioteca mediante la gestión de libros, autores y préstamos, además de almacenar la información utilizando archivos JSON//
+
+Se Creo una bibliteca digital para gestionar libros, autores y préstamos de libros y permite almacenar y recuperar datos mediante archivos JSON.
 
 ---
 
