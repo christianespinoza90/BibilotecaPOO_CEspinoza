@@ -62,3 +62,5 @@ Permite trabajar con archivos utilizados por el sistema.
 
 ##  Clase JsonManager
 Realiza la serialización y deserialización de los datos utilizando formato JSON.
+
+Se conecto a la base de datos correctamente y se implementaron las funciones necesarias para guardar y recuperar la información de los libros, autores y préstamos.
