@@ -1,137 +1,157 @@
 ﻿using System;
-using System.IO;
+using System.Data.SqlClient; 
 using BibliotecaPOO_CEspinoza.Models;
 
 namespace BibliotecaPOO_CEspinoza.Generales
 {
     public class Archivo
     {
-        // Rutas de los archivos
-        private string rutaLibros = "Libros.txt";
-        private string rutaAutores = "Autores.txt";
-        private string rutaPrestamos = "Prestamos.txt";
+        // ⚠️ IMPORTANTE: Cambia "TU_SERVIDOR" y "TU_BASE_DE_DATOS" por los datos reales de tu SQL Server
+        // Si usas autenticación de Windows (LocalDB), puedes usar: "Server=(localdb)\\MSSQLLocalDB;Database=Biblioteca_CEspinoza;Integrated Security=True;"
+        private string connectionString = "Server=Christian2025\\SQLEXPRESS;Database=Biblioteca_CEspinoza;Integrated Security=True;";
 
         // ===================== LIBROS =====================
 
         public void GuardarLibros()
         {
-            StreamWriter escritor = new StreamWriter(rutaLibros);
+            Console.WriteLine("Guardando libros en SQL Server...");
 
+           
             foreach (Libro libro in Database.Libros)
             {
-                escritor.WriteLine(
-                    libro.Codigo + ";" +
-                    libro.Titulo + ";" +
-                    libro.Categoria + ";" +
-                    libro.Anio + ";" +
-                    libro.Editorial);
+                libro.GuardarEnSQLServer(connectionString);
             }
 
-            escritor.Close();
-
-            Console.WriteLine("Libros guardados correctamente.");
+            Console.WriteLine("Proceso de guardado de libros finalizado.");
         }
 
         public void LeerLibros()
         {
-            if (!File.Exists(rutaLibros))
+            Console.WriteLine("========== LIBROS (DESDE SQL SERVER) ==========");
+            string query = "SELECT Codigo, Titulo, Categoria, Anio, Editorial FROM Libros";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                Console.WriteLine("No existe el archivo de libros.");
-                return;
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        connection.Open();
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (!reader.HasRows)
+                        {
+                            Console.WriteLine("No hay libros registrados en la base de datos.");
+                        }
+
+                        while (reader.Read())
+                        {
+                            
+                            Console.WriteLine($"{reader["Codigo"]} | {reader["Titulo"]} | {reader["Categoria"]} | {reader["Anio"]} | {reader["Editorial"]}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al leer libros de la BD: {ex.Message}");
+                    }
+                }
             }
-
-            StreamReader lector = new StreamReader(rutaLibros);
-
-            Console.WriteLine("========== LIBROS ==========");
-
-            while (!lector.EndOfStream)
-            {
-                Console.WriteLine(lector.ReadLine());
-            }
-
-            lector.Close();
         }
 
         // ===================== AUTORES =====================
 
         public void GuardarAutores()
         {
-            StreamWriter escritor = new StreamWriter(rutaAutores);
+            Console.WriteLine("Guardando autores en SQL Server...");
 
             foreach (Autor autor in Database.Autores)
             {
-                escritor.WriteLine(
-                    autor.Cedula + ";" +
-                    autor.Nombre + ";" +
-                    autor.Nacionalidad + ";" +
-                    autor.Edad + ";" +
-                    autor.Genero);
+                autor.GuardarEnSQLServer(connectionString);
             }
 
-            escritor.Close();
-
-            Console.WriteLine("Autores guardados correctamente.");
+            Console.WriteLine("Proceso de guardado de autores finalizado.");
         }
 
         public void LeerAutores()
         {
-            if (!File.Exists(rutaAutores))
+            Console.WriteLine("========== AUTORES (DESDE SQL SERVER) ==========");
+            string query = "SELECT Cedula, Nombre, Nacionalidad, Edad, Genero FROM Autores";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                Console.WriteLine("No existe el archivo de autores.");
-                return;
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        connection.Open();
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (!reader.HasRows)
+                        {
+                            Console.WriteLine("No hay autores registrados en la base de datos.");
+                        }
+
+                        while (reader.Read())
+                        {
+                            Console.WriteLine($"{reader["Cedula"]} | {reader["Nombre"]} | {reader["Nacionalidad"]} | {reader["Edad"]} | {reader["Genero"]}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al leer autores de la BD: {ex.Message}");
+                    }
+                }
             }
-
-            StreamReader lector = new StreamReader(rutaAutores);
-
-            Console.WriteLine("========== AUTORES ==========");
-
-            while (!lector.EndOfStream)
-            {
-                Console.WriteLine(lector.ReadLine());
-            }
-
-            lector.Close();
         }
 
         // ===================== PRÉSTAMOS =====================
 
         public void GuardarPrestamos()
         {
-            StreamWriter escritor = new StreamWriter(rutaPrestamos);
+            Console.WriteLine("Guardando préstamos en SQL Server...");
 
             foreach (Prestamo prestamo in Database.Prestamos)
             {
-                escritor.WriteLine(
-                    prestamo.Libro.Codigo + ";" +
-                    prestamo.Autor.Cedula + ";" +
-                    prestamo.FechaPrestamo.ToShortDateString() + ";" +
-                    prestamo.FechaDevolucion.ToShortDateString() + ";" +
-                    prestamo.Estado);
+                prestamo.GuardarEnSQLServer(connectionString);
             }
 
-            escritor.Close();
-
-            Console.WriteLine("Préstamos guardados correctamente.");
+            Console.WriteLine("Proceso de guardado de préstamos finalizado.");
         }
 
         public void LeerPrestamos()
         {
-            if (!File.Exists(rutaPrestamos))
+            Console.WriteLine("========== PRÉSTAMOS (DESDE SQL SERVER) ==========");
+            string query = "SELECT LibroCodigo, AutorCedula, FechaPrestamo, FechaDevolucion, Estado FROM Prestamos";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                Console.WriteLine("No existe el archivo de préstamos.");
-                return;
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        connection.Open();
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        if (!reader.HasRows)
+                        {
+                            Console.WriteLine("No hay préstamos registrados en la base de datos.");
+                        }
+
+                        while (reader.Read())
+                        {
+                            // Formateamos las fechas al leerlas
+                            DateTime fechaPres = Convert.ToDateTime(reader["FechaPrestamo"]);
+                            DateTime fechaDev = Convert.ToDateTime(reader["FechaDevolucion"]);
+
+                            Console.WriteLine($"{reader["LibroCodigo"]} | {reader["AutorCedula"]} | {fechaPres.ToShortDateString()} | {fechaDev.ToShortDateString()} | {reader["Estado"]}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error al leer préstamos de la BD: {ex.Message}");
+                    }
+                }
             }
-
-            StreamReader lector = new StreamReader(rutaPrestamos);
-
-            Console.WriteLine("========== PRÉSTAMOS ==========");
-
-            while (!lector.EndOfStream)
-            {
-                Console.WriteLine(lector.ReadLine());
-            }
-
-            lector.Close();
         }
     }
 }
